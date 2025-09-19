@@ -1,8 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import { assets } from '../../assets/admin_assets/assets'
+import { useContext } from 'react'
+import { UserContext } from '../../context/userContext'
 
 
 function Navbar() {
+
+    const {logout} = useContext(UserContext)
+
     return (
         <>
             <div className='p-2'>
@@ -12,7 +17,7 @@ function Navbar() {
                     </NavLink>
 
 
-                    <button className='bg-black text-white px-10 py-2 rounded 
+                    <button onClick={() => logout()} className='bg-black text-white px-10 py-2 rounded 
             hover:bg-slate-800 transition'>
                         Sair
                     </button>

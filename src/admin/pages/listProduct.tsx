@@ -1,12 +1,9 @@
-import React from 'react';
 
-const AdminProductsPage: React.FC = () => {
+
+function listProduct() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Gerenciamento de Produtos</h1>
-      {/* Aqui virá a lógica de listagem, criação e edição de produtos */}
-    </div>
-  );
-};
+    <div>listProduct</div>
+  )
+}
 
-export default AdminProductsPage;
+export default listProduct

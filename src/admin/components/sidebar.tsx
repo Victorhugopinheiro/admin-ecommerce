@@ -35,11 +35,11 @@ function Sidebar({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-col  gap-6 items-center  w-full">
 
 
-                    <NavComponent colapse={colapse} icon={assets.add_icon} to="/admin/add" />
+                    <NavComponent colapse={colapse} icon={assets.add_icon} to="/add" />
 
-                    <NavComponent colapse={colapse} icon={assets.order_icon} to="/admin/list" />
+                    <NavComponent colapse={colapse} icon={assets.order_icon} to="/list" />
 
-                    <NavComponent colapse={colapse} icon={assets.order_icon} to="/admin/orders" />
+                    <NavComponent colapse={colapse} icon={assets.order_icon} to="/orders" />
 
 
                 </div>
@@ -60,11 +60,11 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 
 
                 <div className="flex flex-col text-black  gap-6 items-start  w-full ">
-                    <NavComponent label="Add items " colapse={colapse} icon={assets.add_icon} to="/admin/add" />
+                    <NavComponent label="Add items " colapse={colapse} icon={assets.add_icon} to="/add" />
 
-                    <NavComponent label="Listar Produtos" colapse={colapse} icon={assets.order_icon} to="/admin/list" />
+                    <NavComponent label="Listar Produtos" colapse={colapse} icon={assets.order_icon} to="/list" />
 
-                    <NavComponent label="Pedidos" colapse={colapse} icon={assets.order_icon} to="/admin/orders" />
+                    <NavComponent label="Pedidos" colapse={colapse} icon={assets.order_icon} to="/orders" />
                 </div>
             </div>
 

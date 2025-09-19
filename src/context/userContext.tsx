@@ -10,25 +10,26 @@ interface UserContextType {
 export const UserContext = createContext({} as UserContextType);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-
-
-
+    // Inicialização síncrona + já seta o header
     const [token, setTokenState] = useState<string | null>(() => {
         const saved = localStorage.getItem("auth:token");
-        return saved ? saved : null;
+        if (saved) {
+            // Ajuste aqui se seu backend NÃO usa o prefixo 'Bearer '
+            api.defaults.headers.common.Authorization = `Bearer ${saved}`;
+        }
+        return saved || null;
     });
 
-
-
+    // Só log / ajuste dinâmico quando token mudar depois
     useEffect(() => {
         if (token) {
-            api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            api.defaults.headers.common.Authorization = `Bearer ${token}`;
+            console.log("[Auth] Authorization header set");
         } else {
-            delete api.defaults.headers.common["Authorization"];
+            delete api.defaults.headers.common.Authorization;
+            console.log("[Auth] Authorization header removed");
         }
     }, [token]);
-
-
 
     const setToken = useCallback((nextToken: string | null, opts?: { remember?: boolean }) => {
         setTokenState(nextToken);

@@ -11,7 +11,7 @@ function LoginPage() {
 
 
 
-    const { setToken, token, changingToken } = useContext(UserContext)
+    const { setToken, token } = useContext(UserContext)
 
 
     useEffect(() => {
