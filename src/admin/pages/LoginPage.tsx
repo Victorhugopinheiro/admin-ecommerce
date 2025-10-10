@@ -47,15 +47,12 @@ function LoginPage() {
 
             if (response.data.token) {
 
-                console.log(
-                    response.data.token
-                )
                 setToken(response.data.token, { remember });
                 console.log(token)
             } else {
                 setToken(null);
             }
-            console.log(token)
+         
 
         }
         catch (error) {

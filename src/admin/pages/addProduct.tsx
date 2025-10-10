@@ -27,7 +27,7 @@ const AdminAddProduct: React.FC = () => {
   const [subCategory, setSubCategory] = useState<SubCategory | "">("");
   const [price, setPrice] = useState<string>("");
   const [sizes, setSizes] = useState<Size[]>([]);
-  const [bestSeller, setBestSeller] = useState(false);
+  const [bestseller, setbestseller] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [apiMessage, setApiMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -84,7 +84,7 @@ const AdminAddProduct: React.FC = () => {
       form.append("subCategory", String(subCategory));
       form.append("price", String(Number(price)));
       form.append("sizes", JSON.stringify(sizes));
-      form.append("bestSeller", String(bestSeller));
+      form.append("bestseller", bestseller ? "true" : "false");
       images[0] && form.append("image1", images[0]);
       images[1] && form.append("image2", images[1]);
       images[2] && form.append("image3", images[2]);
@@ -94,8 +94,8 @@ const AdminAddProduct: React.FC = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setApiMessage({ type: "success", text: "Produto criado com sucesso." });
-      console.log("Produto criado:", response.data);
+      setApiMessage({ type: "success", text: response.data.message || "Produto criado com sucesso!" });
+
 
     } catch (err: any) {
       const msg = err?.response?.data?.message || "Falha ao criar produto.";
@@ -109,7 +109,7 @@ const AdminAddProduct: React.FC = () => {
       setSubCategory("");
       setPrice("");
       setSizes([]);
-      setBestSeller(false);
+      setbestseller(false);
       setLoading(false);
     }
   }
@@ -267,8 +267,8 @@ const AdminAddProduct: React.FC = () => {
 
         {/* Best Seller */}
         <div className="mb-6 flex items-center gap-2">
-          <input id="bestSeller" type="checkbox" checked={bestSeller} onChange={(e) => setBestSeller(e.target.checked)} />
-          <label htmlFor="bestSeller" className="text-sm text-slate-700">
+          <input id="bestseller" type="checkbox" checked={bestseller} onChange={(e) => setbestseller(e.target.checked)} />
+          <label htmlFor="bestseller" className="text-sm text-slate-700">
             Adicionar em mais vendidos (best seller)
           </label>
         </div>
@@ -284,7 +284,7 @@ const AdminAddProduct: React.FC = () => {
           <button
             type="button"
             onClick={() => {
-              setImages([]); setName(""); setDescription(""); setCategory(""); setSubCategory(""); setPrice(""); setSizes([]); setBestSeller(false); setErrors({});
+              setImages([]); setName(""); setDescription(""); setCategory(""); setSubCategory(""); setPrice(""); setSizes([]); setbestseller(false); setErrors({});
             }}
             className="h-11 rounded-xl border border-slate-300 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-100"
           >

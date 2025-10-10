@@ -69,7 +69,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
             </div>
 
 
-            <div>
+            <div className="flex-1 overflow-x-hidden">
                 {children}
             </div>
 
