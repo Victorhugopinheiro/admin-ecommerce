@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import api from "../../service/api";
 import { UserContext } from "../../context/userContext";
+import { toast } from "react-toastify";
 
 type Errors = {
     email?: string;
@@ -9,14 +10,13 @@ type Errors = {
 
 function LoginPage() {
 
+    const { setAuthenticated } = useContext(UserContext);
 
 
-    const { setToken, token } = useContext(UserContext)
 
 
-    useEffect(() => {
-        console.log('token mudou', token);
-    }, [token])
+
+
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -45,19 +45,21 @@ function LoginPage() {
                 email, password
             })
 
-            if (response.data.token) {
+            if (response.data.success) {
 
-                setToken(response.data.token, { remember });
-                console.log(token)
+                setAuthenticated(true);
+                toast.success("Login bem-sucedido!");
+
             } else {
-                setToken(null);
+                setAuthenticated(false);
+                toast.error(response.data.message || "Erro ao fazer login.");
             }
-         
+
 
         }
         catch (error) {
             console.error(error);
-            setToken(null);
+            setAuthenticated(false);
         }
         finally {
             setLoading(false);

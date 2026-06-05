@@ -90,9 +90,7 @@ const AdminAddProduct: React.FC = () => {
       images[2] && form.append("image3", images[2]);
       images[3] && form.append("image4", images[3]);
 
-      const response = await api.post("/api/products/add", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await api.post("/api/products/add", form);
 
       setApiMessage({ type: "success", text: response.data.message || "Produto criado com sucesso!" });
 

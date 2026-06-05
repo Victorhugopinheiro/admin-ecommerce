@@ -6,7 +6,7 @@ import { UserContext } from '../../context/userContext'
 
 function Navbar() {
 
-    const {logout} = useContext(UserContext)
+    const { logout } = useContext(UserContext)
 
     return (
         <>

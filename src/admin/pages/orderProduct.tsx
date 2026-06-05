@@ -8,24 +8,20 @@ import type { Order } from "../../type/order";
 
 const AdminOrdersPage = () => {
 
-  const { token, products } = useContext(UserContext);
+  const {  products } = useContext(UserContext);
   const [orders, setOrders] = useState<Order[]>([])
 
 
   const gettingAllOrders = async () => {
     try {
-      const response = await api.post('/api/orders/list', {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const response = await api.post('/api/orders/list', {})
 
 
       if (response.data.success) {
 
-        console.log("Pedidos:", response.data.orders);
+        
         setOrders(response.data.orders);
-        console.log(products?.length)
+        
       } else {
         toast.error("Erro ao buscar pedidos");
       }
@@ -37,47 +33,41 @@ const AdminOrdersPage = () => {
 
   useEffect(() => {
 
-    if (!token) {
-      window.location.href = "/admin/login";
-    }
+   
 
     gettingAllOrders();
 
-  }, [token]);
+  }, []);
 
- const changeOrderStatus = async (orderId: string, status: string) => {
-  alert(orderId + ' - ' + status);
+  const changeOrderStatus = async (orderId: string, status: string) => {
+    alert(orderId + ' - ' + status);
 
-  if(!token) return;
 
-  if(!orderId || !status) {
-    toast.error("ID do pedido ou status inválido.");
-    return;
-  }
 
-  try{
-
-    const response = await api.patch('/api/orders/update-status', {
-      orderId,
-      status
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if(response.data.success) {
-      toast.success("Status do pedido atualizado.");
-      setOrders(orders.map(o => o._id === orderId ? { ...o, status: status as Order["status"] } : o));
+    if (!orderId || !status) {
+      toast.error("ID do pedido ou status inválido.");
+      return;
     }
 
-  }catch(err) {
-    console.log(err);
-    toast.error("Erro ao atualizar status do pedido.");
-  }
+    try {
 
-  
- }
+      const response = await api.patch('/api/orders/update-status', {
+        orderId,
+        status
+      });
+
+      if (response.data.success) {
+        toast.success("Status do pedido atualizado.");
+        setOrders(orders.map(o => o._id === orderId ? { ...o, status: status as Order["status"] } : o));
+      }
+
+    } catch (err) {
+      console.log(err);
+      toast.error("Erro ao atualizar status do pedido.");
+    }
+
+
+  }
   return (
     <div className="w-full p-6">
       <h1 className="text-2xl font-bold mb-4">Gerenciamento de Pedidos</h1>
@@ -88,7 +78,7 @@ const AdminOrdersPage = () => {
         {orders.map((order) => {
           const findProduct = products?.find(prod => prod._id === order.items[0]?.productId);
 
-          if (!findProduct) return null; // evite renderizar nada se não achar produto
+          if (!findProduct) return null;
 
           return (
             <div className="flex items-center gap-4 border w-full p-4 rounded bg-white" key={order._id}>
@@ -97,11 +87,23 @@ const AdminOrdersPage = () => {
                 <p className="font-semibold">{findProduct.name}</p>
                 <p className="text-sm text-slate-600">Pedido #{order._id.slice(-6)}</p>
                 <p className="text-sm text-slate-600">Total: R$ {order.totalAmount.toFixed(2).replace('.', ',')}</p>
+                <p className="text-sm text-slate-600">Metodo de pagamento
+                  <span className="ml-2 text-slate-800 font-semibold">
+                    {order.paymentMethod}
+                  </span>
+                </p>
+                <p className="text-sm text-slate-600">Status de pagamento
+
+                  <span className="ml-2 text-slate-800 font-semibold">
+                    {order.paymentStatus}
+                  </span>
+
+                </p>
               </div>
 
               <div>
-                <select onChange={ (e) => changeOrderStatus(order._id, e.target.value) } className="border rounded p-2">
-                  <option  value="pending" selected={order.status === 'pending'}>Pendente</option>
+                <select onChange={(e) => changeOrderStatus(order._id, e.target.value)} className="border rounded p-2">
+                  <option value="pending" selected={order.status === 'pending'}>Pendente</option>
                   <option value="shipped" selected={order.status === 'shipped'}>Enviado</option>
                   <option value="delivered" selected={order.status === 'delivered'}>Entregue</option>
                   <option value="refunded" selected={order.status === 'refunded'}>Cancelado</option>
@@ -117,7 +119,7 @@ const AdminOrdersPage = () => {
       </div>
     </div>
   );
-// ...existing code...
+
 };
 
 export default AdminOrdersPage;

@@ -13,9 +13,9 @@ const HomePage: React.FC = () => <h1>Página Inicial da Loja</h1>;
 
 const App: React.FC = () => {
 
-  const { token } = useContext(UserContext);
+  const { authenticated } = useContext(UserContext);
 
-  if (!token) {
+  if (!authenticated) {
     return <LoginPage />;
   }
 

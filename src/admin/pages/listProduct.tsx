@@ -1,20 +1,21 @@
-import React, {  useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import api from '../../service/api';
 import { UserContext } from '../../context/userContext';
 import axios from 'axios';
-
+import {UserProducts} from "../../hooks/gettingUserHook";
 
 
 const AdminProductsPage: React.FC = () => {
-  const { token, defininProducts, products } = useContext(UserContext)!;
- 
+  const { authenticated, defininProducts, products } = useContext(UserContext)!;
+
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const {data, isLoading} = UserProducts()
 
-  
+
 
   const deleteItem = async (id: string) => {
-    if (!token) return;
+    if (!authenticated) return;
     if (!window.confirm("Tem certeza que deseja excluir este produto?")) return;
     setLoading(true);
     setApiError(null);
@@ -22,10 +23,10 @@ const AdminProductsPage: React.FC = () => {
       const res = await api.delete(`/api/products/delete`, {
         data: { productId: id }
       });
-  
+
       if (res.data?.success) {
-        defininProducts({products: products?.filter(p => p._id !== id) || []});
-      
+        defininProducts({ products: products?.filter(p => p._id !== id) || [] });
+
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -35,7 +36,7 @@ const AdminProductsPage: React.FC = () => {
       }
     }
   };
-  
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Gerenciamento de Produtos</h1>
@@ -44,8 +45,8 @@ const AdminProductsPage: React.FC = () => {
       {!loading && !apiError && products!.length === 0 && (
         <p className="text-sm text-slate-500">Nenhum produto.</p>
       )}
-  
-      {products!.length > 0 && (
+
+      {!isLoading && data!.length > 0 && (
         <div className="mt-4 space-y-2">
           <div className='grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-6 rounded border bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700'>
             <b>Imagem</b>
