@@ -125,7 +125,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
 
-        
+
         verifyAuth();
 
         return () => { };
