@@ -46,7 +46,8 @@ function LoginPage() {
             })
 
             if (response.data.success) {
-
+                console.log(email, password);
+                console.log(response.data)
                 setAuthenticated(true);
                 toast.success("Login bem-sucedido!");
 

@@ -19,8 +19,10 @@ const AdminOrdersPage = () => {
 
       if (response.data.success) {
 
+    
+
         
-        setOrders(response.data.orders);
+      setOrders(response.data.orders);
         
       } else {
         toast.error("Erro ao buscar pedidos");
@@ -36,6 +38,7 @@ const AdminOrdersPage = () => {
    
 
     gettingAllOrders();
+   
 
   }, []);
 
@@ -76,6 +79,7 @@ const AdminOrdersPage = () => {
         {orders.length === 0 && <p className="text-sm text-slate-500">Nenhum pedido encontrado.</p>}
 
         {orders.map((order) => {
+          
           const findProduct = products?.find(prod => prod._id === order.items[0]?.productId);
 
           if (!findProduct) return null;
