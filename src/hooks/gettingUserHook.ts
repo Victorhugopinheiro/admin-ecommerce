@@ -10,7 +10,8 @@ export function UserProducts() {
         queryFn: async () => {
             try {
                 const repsonse = await api.get("/api/products/list");
-
+                
+            
 
                 return repsonse.data.products as Product[];
 

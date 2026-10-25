@@ -2,17 +2,18 @@ import React, { useState, useContext } from 'react';
 import api from '../../service/api';
 import { UserContext } from '../../context/userContext';
 import axios from 'axios';
-import {UserProducts} from "../../hooks/gettingUserHook";
-
+import { UserProducts } from "../../hooks/gettingUserHook";
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
 
 const AdminProductsPage: React.FC = () => {
   const { authenticated, defininProducts, products } = useContext(UserContext)!;
 
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  const {data, isLoading} = UserProducts()
+  const { data: userProducts, isLoading } = UserProducts()
 
 
+  const queryClient = useQueryClient();
 
   const deleteItem = async (id: string) => {
     if (!authenticated) return;
@@ -24,7 +25,11 @@ const AdminProductsPage: React.FC = () => {
         data: { productId: id }
       });
 
-      if (res.data?.success) {
+      queryClient.invalidateQueries({ queryKey: ['userProducts'] });
+
+
+
+        if(res.data?.success) {
         defininProducts({ products: products?.filter(p => p._id !== id) || [] });
 
       }
@@ -46,7 +51,7 @@ const AdminProductsPage: React.FC = () => {
         <p className="text-sm text-slate-500">Nenhum produto.</p>
       )}
 
-      {!isLoading && data!.length > 0 && (
+      {!isLoading && userProducts!.length > 0 && (
         <div className="mt-4 space-y-2">
           <div className='grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-6 rounded border bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700'>
             <b>Imagem</b>
@@ -57,7 +62,7 @@ const AdminProductsPage: React.FC = () => {
             <b className="">Mais Vendido</b>
             <b className="">Preço</b>
           </div>
-          {products!.map(p => (
+          {userProducts!.map(p => (
             <div key={p._id} className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-6 rounded border bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700">
               <div>{p.image?.[0] ? <img src={p.image[0]} className="h-12 w-12 object-cover rounded" /> : "—"}</div>
               <div className="font-medium">{p.name}</div>

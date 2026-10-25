@@ -7,6 +7,7 @@ import Sidebar from './admin/components/sidebar';
 import AdminAddProduct from './admin/pages/addProduct';
 import ListProduct from './admin/pages/listProduct';
 import OrderProducts from './admin/pages/orderProduct';
+import CategoryPage from './admin/pages/categoryPage';
 
 
 const HomePage: React.FC = () => <h1>Página Inicial da Loja</h1>;
@@ -34,6 +35,7 @@ const App: React.FC = () => {
           <Route index path='/add' element={<AdminAddProduct />} />
           <Route path="/list" element={<ListProduct />} />
           <Route path="/orders" element={<OrderProducts />} />
+          <Route path="/categories" element={<CategoryPage />} />
 
 
           <Route path="*" element={<h1>Erro 404 - Página não encontrada</h1>} />
