@@ -2,31 +2,29 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import api from "../../service/api";
 import { useGettingCategories } from "../../hooks/gettingCategories";
+import { useFranchise } from "../../hooks/franchise/useFranchise";
 
 type Size = "S" | "M" | "L" | "XL" | "XXL";
 type Category = "Men" | "Women" | "Kids";
-type SubCategory = "Topwear" | "Bottomwear" | "Winterwear";
 
-const CATEGORIES: Category[] = ["Men", "Women", "Kids"];
-const SUB_CATEGORIES: SubCategory[] = ["Topwear", "Bottomwear", "Winterwear"];
 const SIZES: Size[] = ["S", "M", "L", "XL", "XXL"];
 
 type Errors = Partial<{
   name: string;
   price: string;
   category: string;
-  subCategory: string;
   images: string;
 }>;
 
 const AdminAddProduct: React.FC = () => {
   const { data: categories } = useGettingCategories();
+  const { data: franchises } = useFranchise();
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<Category | "">("");
-  const [subCategory, setSubCategory] = useState<SubCategory | "">("");
+  const [franchise, setFranchise] = useState("");
   const [price, setPrice] = useState<string>("");
   const [sizes, setSizes] = useState<Size[]>([]);
   const [bestseller, setbestseller] = useState(false);
@@ -73,7 +71,6 @@ const AdminAddProduct: React.FC = () => {
     if (!price || Number.isNaN(value) || value <= 0)
       next.price = "Preço inválido.";
     if (!category) next.category = "Selecione a categoria.";
-    if (!subCategory) next.subCategory = "Selecione a subcategoria.";
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -88,7 +85,8 @@ const AdminAddProduct: React.FC = () => {
       form.append("name", name);
       form.append("description", description);
       form.append("category", String(category));
-      form.append("subCategory", String(subCategory));
+      if (franchise) form.append("franchise", franchise);
+      if (!franchise) form.append("franchise", "");
       form.append("price", String(Number(price)));
       form.append("sizes", JSON.stringify(sizes));
       form.append("bestseller", bestseller ? "true" : "false");
@@ -111,7 +109,7 @@ const AdminAddProduct: React.FC = () => {
       setName("");
       setDescription("");
       setCategory("");
-      setSubCategory("");
+      setFranchise("");
       setPrice("");
       setSizes([]);
       setbestseller(false);
@@ -243,27 +241,20 @@ const AdminAddProduct: React.FC = () => {
 
           <div>
             <label className="mb-1 block text-sm font-semibold text-slate-700">
-              Sub Categoria
+              Franquia
             </label>
             <select
-              value={subCategory}
-              onChange={(e) => setSubCategory(e.target.value as SubCategory)}
-              className={`h-11 w-full rounded-xl border px-3 text-sm outline-none focus:ring-4 ${
-                errors.subCategory
-                  ? "border-red-500 focus:ring-red-100"
-                  : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-100"
-              }`}
+              value={franchise}
+              onChange={(e) => setFranchise(e.target.value)}
+              className="h-11 w-full rounded-xl border border-slate-300 px-3 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
             >
               <option value="">Selecione</option>
-              {SUB_CATEGORIES.map((subCategory) => (
-                <option key={subCategory} value={subCategory}>
-                  {subCategory}
+              {franchises?.map((item) => (
+                <option key={item._id} value={item.type}>
+                  {item.type}
                 </option>
               ))}
             </select>
-            {errors.subCategory && (
-              <p className="mt-1 text-xs text-red-600">{errors.subCategory}</p>
-            )}
           </div>
 
           <div>
@@ -342,7 +333,7 @@ const AdminAddProduct: React.FC = () => {
               setName("");
               setDescription("");
               setCategory("");
-              setSubCategory("");
+              setFranchise("");
               setPrice("");
               setSizes([]);
               setbestseller(false);
