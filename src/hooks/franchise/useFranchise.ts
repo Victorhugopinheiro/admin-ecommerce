@@ -1,12 +1,12 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import api from "../../service/api";
-import type { ApiMessageResponse } from "../../types/categoryType";
+import { useQuery } from "@tanstack/react-query";
+import { getFranchises } from "../../service/franchises";
+import type { Franchise } from "../../types/franchiseType";
 
-export const FRANCHISES_QUERY_KEY = ["franchise"] as const;
+export const FRANCHISES_QUERY_KEY = ["franchises"] as const;
 
 export function useFranchise() {
-  return useQuery({
+  return useQuery<Franchise[]>({
     queryKey: FRANCHISES_QUERY_KEY,
-    queryFn: () => api.get("/api/franchise/list"),
+    queryFn: getFranchises,
   });
 }

@@ -1,13 +1,13 @@
 import React from "react";
-import CategoryForm from "../components/categories/CategoryForm";
-import CategoryList from "../components/categories/CategoryList";
+import FranchiseForm from "../components/franchises/FranchiseForm";
+import FranchiseList from "../components/franchises/FranchiseList";
 
 const FranchisePage: React.FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Gerenciamento de Franquias</h1>
-      <CategoryForm />
-      <CategoryList />
+      <FranchiseForm />
+      <FranchiseList />
     </div>
   );
 };
