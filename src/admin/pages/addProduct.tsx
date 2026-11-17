@@ -6,6 +6,7 @@ import { useFranchise } from "../../hooks/franchise/useFranchise";
 
 type Size = "S" | "M" | "L" | "XL" | "XXL";
 type Category = "Men" | "Women" | "Kids";
+type Characteristic = { title: string; description: string };
 
 const SIZES: Size[] = ["S", "M", "L", "XL", "XXL"];
 
@@ -14,6 +15,7 @@ type Errors = Partial<{
   price: string;
   category: string;
   images: string;
+  characteristics: string;
 }>;
 
 const AdminAddProduct: React.FC = () => {
@@ -27,6 +29,7 @@ const AdminAddProduct: React.FC = () => {
   const [franchise, setFranchise] = useState("");
   const [price, setPrice] = useState<string>("");
   const [sizes, setSizes] = useState<Size[]>([]);
+  const [characteristics, setCharacteristics] = useState<Characteristic[]>([]);
   const [bestseller, setbestseller] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
@@ -63,6 +66,44 @@ const AdminAddProduct: React.FC = () => {
     setImages((prev) => prev.filter((_, i) => i !== index));
   }
 
+  function addCharacteristic() {
+    setCharacteristics((prev) => [...prev, { title: "", description: "" }]);
+  }
+
+  function updateCharacteristic(
+    index: number,
+    field: keyof Characteristic,
+    value: string
+  ) {
+    setCharacteristics((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+  }
+
+  function removeCharacteristic(index: number) {
+    setCharacteristics((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function collectCharacteristics(): {
+    rows: Characteristic[];
+    error?: string;
+  } {
+    const rows: Characteristic[] = [];
+    for (const item of characteristics) {
+      const title = item.title.trim();
+      const description = item.description.trim();
+      if (!title && !description) continue;
+      if (!title || !description) {
+        return {
+          rows: [],
+          error: "Preencha o título e a descrição de cada característica.",
+        };
+      }
+      rows.push({ title, description });
+    }
+    return { rows };
+  }
+
   function validate(): boolean {
     const next: Errors = {};
     if (!images.length) next.images = "Envie ao menos 1 imagem.";
@@ -71,6 +112,8 @@ const AdminAddProduct: React.FC = () => {
     if (!price || Number.isNaN(value) || value <= 0)
       next.price = "Preço inválido.";
     if (!category) next.category = "Selecione a categoria.";
+    const collected = collectCharacteristics();
+    if (collected.error) next.characteristics = collected.error;
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -89,6 +132,10 @@ const AdminAddProduct: React.FC = () => {
       if (!franchise) form.append("franchise", "");
       form.append("price", String(Number(price)));
       form.append("sizes", JSON.stringify(sizes));
+      form.append(
+        "characteristics",
+        JSON.stringify(collectCharacteristics().rows)
+      );
       form.append("bestseller", bestseller ? "true" : "false");
       images[0] && form.append("image1", images[0]);
       images[1] && form.append("image2", images[1]);
@@ -112,6 +159,7 @@ const AdminAddProduct: React.FC = () => {
       setFranchise("");
       setPrice("");
       setSizes([]);
+      setCharacteristics([]);
       setbestseller(false);
       setLoading(false);
     }
@@ -211,6 +259,59 @@ const AdminAddProduct: React.FC = () => {
             rows={4}
             className="w-full max-w-[400px] max-h-[400px] rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
           />
+        </div>
+
+        <div className="mb-4">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
+            Características
+          </label>
+          <div className="space-y-3">
+            {characteristics.map((item, index) => (
+              <div
+                key={index}
+                className="rounded-xl border border-slate-200 bg-white p-3"
+              >
+                <div className="mb-2 flex items-start gap-2">
+                  <input
+                    value={item.title}
+                    onChange={(e) =>
+                      updateCharacteristic(index, "title", e.target.value)
+                    }
+                    placeholder="Título"
+                    className="h-11 w-full rounded-xl border border-slate-300 px-3 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeCharacteristic(index)}
+                    className="h-11 shrink-0 rounded-xl border border-slate-300 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                  >
+                    Remover
+                  </button>
+                </div>
+                <textarea
+                  value={item.description}
+                  onChange={(e) =>
+                    updateCharacteristic(index, "description", e.target.value)
+                  }
+                  placeholder="Descrição da característica"
+                  rows={2}
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                />
+              </div>
+            ))}
+          </div>
+          {errors.characteristics && (
+            <p className="mt-1 text-xs text-red-600">
+              {errors.characteristics}
+            </p>
+          )}
+          <button
+            type="button"
+            onClick={addCharacteristic}
+            className="mt-3 h-10 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            Adicionar característica
+          </button>
         </div>
 
         <div className="mb-4 grid gap-4 md:grid-cols-3">
@@ -336,6 +437,7 @@ const AdminAddProduct: React.FC = () => {
               setFranchise("");
               setPrice("");
               setSizes([]);
+              setCharacteristics([]);
               setbestseller(false);
               setErrors({});
             }}
