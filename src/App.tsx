@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { lazy, Suspense, useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./admin/pages/LoginPage";
 import { UserContext } from "./context/userContext";
@@ -9,6 +9,12 @@ import ListProduct from "./admin/pages/listProduct";
 import OrderProducts from "./admin/pages/orderProduct";
 import CategoryPage from "./admin/pages/categoryPage";
 import FranchisePage from "./admin/pages/FranchisePage";
+
+const ReviewPage = lazy(() => import("./admin/pages/reviewPage"));
+
+function RouteFallback() {
+  return <p className="text-sm text-slate-500">Carregando...</p>;
+}
 
 const HomePage: React.FC = () => <h1>Página Inicial da Loja</h1>;
 
@@ -34,6 +40,14 @@ const App: React.FC = () => {
           <Route index path="/add" element={<AdminAddProduct />} />
           <Route path="/list" element={<ListProduct />} />
           <Route path="/orders" element={<OrderProducts />} />
+          <Route
+            path="/reviews"
+            element={
+              <Suspense fallback={<RouteFallback />}>
+                <ReviewPage />
+              </Suspense>
+            }
+          />
           <Route path="/categories" element={<CategoryPage />} />
           <Route path="/franchise" element={<FranchisePage />} />
 
