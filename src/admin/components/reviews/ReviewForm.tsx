@@ -348,14 +348,14 @@ const ReviewForm = () => {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="max-w-3xl rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+      className="@container w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
     >
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 @min-[36rem]:grid-cols-2">
         <Field
           id="review-product"
           label="Produto"
           error={errors.productId}
-          className="md:col-span-2"
+          className="@min-[36rem]:col-span-2"
         >
           <select
             id="review-product"
@@ -475,7 +475,7 @@ const ReviewForm = () => {
           id="review-message"
           label="Mensagem"
           error={errors.message}
-          className="md:col-span-2"
+          className="@min-[36rem]:col-span-2"
         >
           <textarea
             id="review-message"
@@ -495,7 +495,7 @@ const ReviewForm = () => {
           label="Mídia (opcional)"
           error={errors.media}
           hint={optionalFileHint}
-          className="md:col-span-2"
+          className="@min-[36rem]:col-span-2"
         >
           <input
             ref={mediaInputRef}
