@@ -2,7 +2,23 @@ import api from "./api";
 import type {
   ApiMessageResponse,
   CreateReviewInput,
+  Review,
+  ReviewListResponse,
 } from "../types/reviewType";
+
+export async function listReviews(): Promise<Review[]> {
+  const response = await api.get<ReviewListResponse>("/api/reviews/list");
+  return response.data.reviews ?? [];
+}
+
+export async function deleteReview(
+  reviewId: string
+): Promise<ApiMessageResponse> {
+  const response = await api.delete<ApiMessageResponse>("/api/reviews/delete", {
+    data: { reviewId },
+  });
+  return response.data;
+}
 
 export async function createReview(
   input: CreateReviewInput
