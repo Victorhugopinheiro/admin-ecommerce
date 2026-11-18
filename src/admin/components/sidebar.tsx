@@ -8,6 +8,7 @@ import {
   LuLogOut,
   LuPackage,
   LuShoppingBag,
+  LuStar,
   LuTag,
 } from "react-icons/lu";
 import { UserContext } from "../../context/userContext";
@@ -22,6 +23,7 @@ const navItems: NavItem[] = [
   { to: "/add", icon: LuCirclePlus, label: "Add items" },
   { to: "/list", icon: LuPackage, label: "Listar Produtos" },
   { to: "/orders", icon: LuShoppingBag, label: "Pedidos" },
+  { to: "/reviews", icon: LuStar, label: "Avaliações" },
   { to: "/categories", icon: LuTag, label: "Categorias" },
   { to: "/franchise", icon: LuBuilding, label: "Franquias" },
 ];
