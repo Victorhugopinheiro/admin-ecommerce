@@ -1,17 +1,21 @@
-import React, { useState, useContext } from 'react';
-import api from '../../service/api';
-import { UserContext } from '../../context/userContext';
-import axios from 'axios';
+import React, { useState, useContext } from "react";
+import api from "../../service/api";
+import { UserContext } from "../../context/userContext";
+import axios from "axios";
 import { UserProducts } from "../../hooks/gettingUserHook";
-import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import {
+  formatBrl,
+  productCardPrice,
+  productCover,
+} from "../../types/productType";
+import { useQueryClient, QueryClient } from "@tanstack/react-query";
 
 const AdminProductsPage: React.FC = () => {
   const { authenticated, defininProducts, products } = useContext(UserContext)!;
 
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  const { data: userProducts, isLoading } = UserProducts()
-
+  const { data: userProducts, isLoading } = UserProducts();
 
   const queryClient = useQueryClient();
 
@@ -22,20 +26,21 @@ const AdminProductsPage: React.FC = () => {
     setApiError(null);
     try {
       const res = await api.delete(`/api/products/delete`, {
-        data: { productId: id }
+        data: { productId: id },
       });
 
-      queryClient.invalidateQueries({ queryKey: ['userProducts'] });
+      queryClient.invalidateQueries({ queryKey: ["userProducts"] });
 
-
-
-        if(res.data?.success) {
-        defininProducts({ products: products?.filter(p => p._id !== id) || [] });
-
+      if (res.data?.success) {
+        defininProducts({
+          products: products?.filter((p) => p._id !== id) || [],
+        });
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setApiError((err.response?.data as any)?.message || "Erro ao excluir produto.");
+        setApiError(
+          (err.response?.data as any)?.message || "Erro ao excluir produto."
+        );
       } else {
         setApiError("Erro inesperado.");
       }
@@ -45,7 +50,11 @@ const AdminProductsPage: React.FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Gerenciamento de Produtos</h1>
-      {apiError && <div className="mb-4 rounded bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{apiError}</div>}
+      {apiError && (
+        <div className="mb-4 rounded bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+          {apiError}
+        </div>
+      )}
       {loading && <p className="text-sm text-slate-500">Carregando...</p>}
       {!loading && !apiError && products!.length === 0 && (
         <p className="text-sm text-slate-500">Nenhum produto.</p>
@@ -53,7 +62,7 @@ const AdminProductsPage: React.FC = () => {
 
       {!isLoading && userProducts!.length > 0 && (
         <div className="mt-4 space-y-2">
-          <div className='grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-6 rounded border bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700'>
+          <div className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-6 rounded border bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700">
             <b>Imagem</b>
             <b className="">Nome</b>
             <b className="">Categoria</b>
@@ -62,23 +71,53 @@ const AdminProductsPage: React.FC = () => {
             <b className="">Mais Vendido</b>
             <b className="">Preço</b>
           </div>
-          {userProducts!.map(p => (
-            <div key={p._id} className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-6 rounded border bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700">
-              <div>{p.image?.[0] ? <img src={p.image[0]} className="h-12 w-12 object-cover rounded" /> : "—"}</div>
-              <div className="font-medium">{p.name}</div>
-              <div>{p.category}</div>
-              <div>{p.subCategory}</div>
-              <div>{p.sizes?.join(", ")}</div>
-              <div>{p.bestSeller ? "Sim" : "Não"}</div>
-              <div>R$ {p.price.toFixed(2).replace('.', ',')}</div>
-              <button onClick={() => deleteItem(p._id)} className="ml-auto text-red-600 hover:underline">X</button>
-            </div>
-          ))}
+          {userProducts!.map((p) => {
+            const cover = productCover(p);
+            const modelNames = p.models
+              ?.map((model) => model.name)
+              .filter(Boolean)
+              .join(", ");
+            return (
+              <div
+                key={p._id}
+                className="grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-6 rounded border bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700"
+              >
+                <div>
+                  {cover ? (
+                    <img
+                      src={cover}
+                      className="h-12 w-12 object-cover rounded"
+                    />
+                  ) : (
+                    "—"
+                  )}
+                </div>
+                <div className="font-medium">
+                  {p.name}
+                  {modelNames ? (
+                    <div className="text-xs font-normal text-slate-500">
+                      {modelNames}
+                    </div>
+                  ) : null}
+                </div>
+                <div>{p.category}</div>
+                <div>{p.subCategory}</div>
+                <div>{p.sizes?.join(", ")}</div>
+                <div>{p.bestSeller ? "Sim" : "Não"}</div>
+                <div>{formatBrl(productCardPrice(p))}</div>
+                <button
+                  onClick={() => deleteItem(p._id)}
+                  className="ml-auto text-red-600 hover:underline"
+                >
+                  X
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
   );
-
-}
+};
 
 export default AdminProductsPage;
