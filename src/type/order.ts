@@ -2,7 +2,8 @@ export interface OrderItem {
   _id: string;
   productId: string;
   quantity: number;
-  size: string;
+  size?: string;
+  model?: string;
   price: number;
 }
 
